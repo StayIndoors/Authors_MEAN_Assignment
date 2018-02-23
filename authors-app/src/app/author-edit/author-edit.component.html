@@ -1,0 +1,13 @@
+<a [routerLink]="['/']">Home</a>
+
+<p>Edit this author</p>
+<div style="border:3px solid black; width:600px; padding:5px">
+  <form (submit)="submitUpdatedAuthor()">
+    <p>Name:</p>
+    <p *ngFor="let error of errors" style="color:red">{{error}}</p>
+    <input type="text" name="name" [(ngModel)]="author.name" style="padding: 10px; width:250px; border: 1px solid black">
+    <br>
+    <button (click)="cancel()">Cancel</button><input type="submit" value="Submit">
+  </form>
+</div>
+
