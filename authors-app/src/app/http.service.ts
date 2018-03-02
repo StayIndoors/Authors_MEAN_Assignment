@@ -22,6 +22,32 @@ export class HttpService {
     return this._http.get('/api/authors/'+id);
   }
 
+  putQuote(quoteObj, id){
+    console.log('service.postQuote');
+    quoteObj.authId = id;
+    return this._http.put('/api/quote', quoteObj);
+  }
+
+  putUpVote(quoteObj, id){
+    console.log('service.putUpVote');
+    quoteObj.authorId = id;
+    console.log('quoteObj: ', quoteObj)
+    return this._http.put('/api/upVote', quoteObj);
+  }
+
+  putDownVote(quoteObj, id){
+    console.log('service.putDownVote');
+    quoteObj.authorId = id;
+    console.log('quoteObj: ', quoteObj)
+    return this._http.put('/api/downVote', quoteObj);
+  }
+
+  removeQuote(quoteObj, id){
+    console.log('service.removeQuote');
+    quoteObj.authorId = id;
+    return this._http.put('/api/delete/quote', quoteObj);
+  }
+
   updateAuthor(authorObj){
     console.log('service.updateAuthor');
     return this._http.put('/api/authors', authorObj)

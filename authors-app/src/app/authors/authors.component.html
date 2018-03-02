@@ -9,6 +9,8 @@
   </thead>
   <tr *ngFor="let author of authors">
     <td>{{author.name}}</td>
-    <td><button (click)="delete(author._id)">DELETE</button> <button [routerLink]="['/edit', author._id]">EDIT</button></td>
+    <td><button [routerLink]="['/quotes', author._id]">View quotes</button> <button [routerLink]="['/edit', author._id]">Edit</button></td>
   </tr>
 </table>
+
+<!-- <button (click)="delete(author._id)">DELETE</button> -->
