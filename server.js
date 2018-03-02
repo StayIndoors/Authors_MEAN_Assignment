@@ -12,13 +12,16 @@ app.use(express.static(__dirname + '/authors-app/dist'));
 
 var AuthorSchema =  new mongoose.Schema({
     name: { type: String, required: true, minlength: 3 },
-    quotes: { type: [String] },
-    votes: { type: Number, default: 0 }
+    quotes: [{
+        content: { type: String, required: true, minlength: 5},
+        votes: { type: Number, default: 0},
+    }]
 }, { timestamps: true });
 
 mongoose.model('Author', AuthorSchema);
 var Author = mongoose.model('Author');
 
+// Author functions
 app.get('/api/authors', function(req,res){
     Author.find({}).sort('name').exec(function(err, authors){
         if(err){
@@ -82,7 +85,110 @@ app.delete('/api/authors/:id', function(req, res){
     })
 })
 
+// Quote functions
+app.put('/api/quote', function (req,res){
+    console.log('put /api/quote, req.body', req.body);
+    Author.findOne({_id: req.body.authId}, function(err, foundAuthor){
+        console.log('author found to add quote: ', foundAuthor);
+        if(err){
+            console.log('put /api/quote error: failed to find Author')
+            res.json(err);
+        } else {
+            console.log('rec.body.content: ', req.body.content)
+            foundAuthor.quotes.push(req.body);
+            foundAuthor.save(function(err){
+                if(err){
+                    console.log('failed to update quote');
+                    res.json(err);
+                } else {
+                    console.log('author new quote saved');
+                    res.json(foundAuthor);
+                }
+            })
+        }
+    })
+})
+
+app.put('/api/upVote', function (req, res){
+    console.log('put /api/upVote', req.body);
+    Author.findOne({_id: req.body.authorId}, function(err, foundAuthor){
+        if(err){
+            console.log('put /api/upVote/quote error: failed to find Author')
+            res.json(err);
+        } else {
+            console.log('found Author: ', foundAuthor);
+            for (let i = 0; i < foundAuthor.quotes.length; i++){
+                if (foundAuthor.quotes[i]._id == req.body._id){
+                    foundAuthor.quotes[i].votes += 1;
+                    foundAuthor.save(function(err){
+                        if(err){
+                            console.log('failed to increase quotes vote');
+                            res.json(err);
+                        } else {
+                            console.log('authors quote vote increased');
+                            res.json(foundAuthor);
+                        }
+                    })
+                }
+            } 
+        }
+    })  
+})
+
+app.put('/api/DownVote', function (req, res){
+    console.log('put /api/downVote', req.body);
+    Author.findOne({_id: req.body.authorId}, function(err, foundAuthor){
+        if(err){
+            console.log('put /api/upVote/quote error: failed to find Author')
+            res.json(err);
+        } else {
+            console.log('found Author: ', foundAuthor);
+            for (let i = 0; i < foundAuthor.quotes.length; i++){
+                if (foundAuthor.quotes[i]._id == req.body._id){
+                    foundAuthor.quotes[i].votes -= 1;
+                    foundAuthor.save(function(err){
+                        if(err){
+                            console.log('failed to increase quotes vote');
+                            res.json(err);
+                        } else {
+                            console.log('authors quote vote increased');
+                            res.json(foundAuthor);
+                        }
+                    })
+                }
+            } 
+        }
+    })  
+})
+
+app.put('/api/delete/quote', function (req, res){
+    console.log('put /api/delete/quote', req.body);
+    Author.findOne({_id: req.body.authorId}, function(err, foundAuthor){
+        if(err){
+            console.log('put /api/delete/quote error: failed to find Author')
+            res.json(err);
+        } else {
+            console.log('found Author: ', foundAuthor);
+            for (let i = 0; i < foundAuthor.quotes.length; i++){
+                if (foundAuthor.quotes[i]._id == req.body._id){
+                    foundAuthor.quotes.splice(i, 1);
+                    foundAuthor.save(function(err){
+                        if(err){
+                            console.log('failed to delete quote');
+                            res.json(err);
+                        } else {
+                            console.log('authors quote deleted');
+                            res.json(foundAuthor);
+                        }
+                    })
+                }
+            } 
+        }
+    })  
+})
+
 app.all('*', function(req, res) {
+    console.log('hit something else');
     res.sendFile(path.resolve(__dirname + '/authors-app/dist/index.html'));
 })
 

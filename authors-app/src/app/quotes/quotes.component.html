@@ -1,3 +1,21 @@
-<p>
-  quotes works!
-</p>
+<div *ngIf="author">
+  <a [routerLink]="['/']">Home</a> <a [routerLink]="['/write', author._id]">Add an quote</a>
+
+  <p>Quotes by {{author.name}}:</p>
+
+  <table>
+    <thead>
+      <th>Quote</th>
+      <th>Votes</th>
+      <th>Actions Available</th>
+    </thead>
+    <!-- Logic of ngFor not complete. Change format of schema? -->
+    <tr *ngFor="let quote of quotes">
+      <td>{{quote.content}}</td>
+      <td>{{quote.votes}}</td>
+      
+      <td><button (click)="upVote(quote, author._id)">Vote up</button> <button (click)="downVote(quote, author._id)">Vote down</button> <button (click)="deleteQuote(quote, author._id)">Delete</button></td>
+    </tr>
+  </table>
+</div>
+
